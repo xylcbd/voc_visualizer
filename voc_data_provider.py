@@ -4,6 +4,7 @@ import os
 import xml.etree.ElementTree as ET
 import cv2
 import copy
+import sys
 
 ########################### main functions ############################
 class PascalVOCDataProvider(object):
@@ -44,7 +45,7 @@ class PascalVOCDataProvider(object):
         label = PascalVOCDataProvider.ALL_CLASSES.index(name)
         return label
 
-    def __init__(self, dataset_root_dir = '/data/hbm/VOCdevkit/VOC2007/', set_name=SET_TRAIN):
+    def __init__(self, dataset_root_dir = '~/data/VOCdevkit/VOC2007/', set_name=SET_TRAIN):
         self.dataset_root_dir = dataset_root_dir
         self.image_dir = os.path.join(self.dataset_root_dir, 'JPEGImages')
         self.anno_dir = os.path.join(self.dataset_root_dir, 'Annotations')
@@ -112,11 +113,16 @@ def print_details(data_provider, set_name):
     cv2.waitKey(0)
 
 if __name__=='__main__':
-    train_data_provider = PascalVOCDataProvider(set_name='train')
+    if len(sys.argv) != 2:
+        print('usage:\n\t%s [voc_root_dir]' % sys.argv[0])
+        sys.exit(-1)
+    voc_root_dir = sys.argv[1]
+
+    train_data_provider = PascalVOCDataProvider(dataset_root_dir=voc_root_dir, set_name=PascalVOCDataProvider.SET_TRAIN)
     print_details(train_data_provider, 'train')
 
-    val_data_provider = PascalVOCDataProvider(set_name='val')
+    val_data_provider = PascalVOCDataProvider(dataset_root_dir=voc_root_dir, set_name=PascalVOCDataProvider.SET_VAL)
     print_details(val_data_provider, 'val')
 
-    test_data_provider = PascalVOCDataProvider(set_name='test')
+    test_data_provider = PascalVOCDataProvider(dataset_root_dir=voc_root_dir, set_name=PascalVOCDataProvider.SET_TEST)
     print_details(test_data_provider, 'test')
